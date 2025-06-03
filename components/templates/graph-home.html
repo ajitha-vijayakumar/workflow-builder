@@ -1,0 +1,20 @@
+<template tag-name="graph-home">
+    <div id="top">
+
+    </div>
+    <div id="center">
+        <div id="left">
+            <draggables-panel draggables="{{draggables}}"></draggables-panel>
+        </div>
+        <div id="mid">
+            <graph-canvas lyte-for-in="{{graphObjects}} as graph graphId" id="{{graphId}}" graph-object = "{{graph}}" on-graph-update="{{action('updateGraphData')}}" on-node-focus="{{action('changeFocusedDetails')}}" ></graph-canvas>
+        </div>
+        <div id="right">
+            <graph-config-editor lyte-for-in="{{graphObjects}} as graph graphId" graph-id="{{graphId}}" on-node-update="{{action('updateNodeData')}}"></graph-config-editor>
+        </div>
+    </div>
+    <div id="bottom">
+
+    </div>
+
+</template>

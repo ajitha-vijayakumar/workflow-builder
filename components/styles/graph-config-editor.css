@@ -1,0 +1,33 @@
+#rightPanel_root {
+    width: 20vw;
+    height: auto;
+    min-height: 92vh;
+    background-color: #f8f8f8;
+    border-left: 1px solid rgb(234 233 233);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    padding-top: 3vw;
+    align-items: center;
+    gap: 2vw;
+    z-index: 1;
+}
+
+#rightPanel_root #content {
+    height: 60vh;
+}
+#rightPanel_root #content #buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin: 1vw;
+    gap: 0.5vw;
+}
+#rightPanel_root #content #code lyte-input {
+    height: 100%;
+}
+
+#rightPanel_root #content #code textarea {
+    overflow: auto;
+    height: 100%;
+}
+

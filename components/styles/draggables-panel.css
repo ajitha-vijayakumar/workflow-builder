@@ -1,0 +1,42 @@
+lyte-button-group {
+    width: fit-content;
+    padding-top: 1vw;
+}
+
+lyte-accordion-header {
+    display: flex;
+    align-items: center;
+}
+
+lyte-accordion-header lyte-icon.lyteAccordionArrow {
+    margin-top: 2.5px;
+}
+
+lyte-accordion-item {
+    padding: 0.25vw 0.75vw;
+}
+
+lyte-accordion-item lyte-accordion-body {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+lyte-accordion-item lyte-accordion-body .item {
+    padding: 1vw;
+    cursor: grab;
+    outline: none;
+    background-color: #fff;
+    user-select: none;
+}
+lyte-accordion-item lyte-accordion-body .item.draggable-helper{
+    cursor: grabbing;
+}
+lyte-accordion-item lyte-accordion-body .item:hover {
+    background-color: #f8f8f8;
+}
+
+lyte-accordion-item lyte-accordion-body .item:focus {
+    background-color: #75b5fa;
+}
+
