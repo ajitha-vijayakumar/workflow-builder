@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dagre</title>
+
+    <script src="https://dagrejs.github.io/project/dagre-d3/latest/dagre-d3.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100" rel="stylesheet" />
+
+    <script src="QGraph.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="QGraph.css">
+    <style>
+        body {
+            font: 300 14px 'Helvetica Neue', Helvetica;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="overall-container">
+
+        <div id="graphContainer">
+            <svg></svg>
+        </div>
+        <div id="graph-config-editor">
+            <div id="content">
+                <div id="form">
+                    <table class="table">
+                        <tbody>
+                            <tr id="name">
+                                <td id="fieldName"> Name </td>
+                                <td id="fieldInput">
+                                    <input type="text" placeholder="Selected Node" appearance="box" value="" id="name"
+                                        oninput="">
+                                    </input>
+                                </td>
+                            </tr>
+                            <tr id="type">
+                                <td id="fieldName"> Type </td>
+                                <td id="fieldInput">
+                                    <select id="dropdown"></select>
+                                </td>
+                            </tr>
+                            <tr id="next">
+                                <td id="fieldName"> Next </td>
+                                <td id="fieldInput">
+                                    <select id="dropdown"></select>
+                                </td>
+                            </tr>
+                            <tr id="payload">
+                                <td> PayLoad</td>
+                                <td>
+                                    <textarea id="payload" onclick="">
+                                    </textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="buttons">
+                        <div id="discard" class="button">
+                            <div id="btnWrapper">
+                                Discard
+                            </div>
+                        </div>
+                        <div id="save" class="button">
+                            <div id="btnWrapper">
+                                Update
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="code">
+                    <p>Graph JSON</p>
+                    <textarea id='codeInput'></textarea>
+                    <div id="render" class="button">
+                        <div id="btnWrapper">
+                            Update
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        var graphData = {};
+        var activeNode = {};
+        var editData = {};
+        var graphObj = {};
+        var rightPanelFormFields = {};
+        var rightPanelCodeField = '';
+        const draggables = ["condition", "switch", "parallel", "node", "success", "failure"];
+        function editDetails() {
+            console.log("hello");
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            graphData = {
+                id: "Graph1",
+                conf: {
+                    "Start": {
+                        type: "node",
+                        next: "Parallel One",
+                        id: "Start",
+                        payload: {}
+                    },
+                    "Parallel One": {
+                        type: "parallel",
+                        id: "Parallel One",
+                        startNode: {
+                            type: "node",
+                            id: "Par 1 Start",
+                            payload: {}
+                        },
+                        paths: [
+                            {
+                                "Parallel Two": {
+                                    type: "parallel",
+                                    start: true,
+                                    id: "Parallel Two",
+                                    startNode: {
+                                        type: "node",
+                                        id: "Par 2 Start",
+                                    },
+                                    paths: [
+                                        {
+                                            "P11": {
+                                                type: "node",
+                                                next: "P11a",
+                                                start: true,
+                                                id: "P11",
+                                                payload: {}
+                                            },
+                                            "P11a": {
+                                                type: "node",
+                                                next: null,
+                                                end: true,
+                                                id: "P11a",
+                                                payload: {}
+                                            },
+                                        }, {
+                                            "P12": {
+                                                type: "node",
+                                                next: "P12a",
+                                                start: true,
+                                                id: "P12",
+                                                payload: {}
+                                            },
+                                            "P12a": {
+                                                type: "node",
+                                                next: null,
+                                                id: "P12a",
+                                                end: true,
+                                            },
+                                        }
+                                    ],
+                                    next: "Par 2 End"
+                                },
+                                "Par 2 End": {
+                                    type: "node",
+                                    next: null,
+                                    end: true,
+                                    id: "Par 2 End",
+                                },
+                            }, {
+                                "P2": {
+                                    type: "node",
+                                    next: "P2a",
+                                    start: true,
+                                    id: "P2",
+                                },
+                                "P2a": {
+                                    type: "node",
+                                    next: null,
+                                    end: true,
+                                    id: "P2a",
+                                },
+                            }
+                        ],
+                        next: "Par 1 End"
+                    },
+                    "Par 1 End": {
+                        type: "node",
+                        next: "Condition One",
+                        id: "Par 1 End",
+                    },
+                    "Condition One": {
+                        type: "condition",
+                        next: "Cond 1 End",
+                        id: "Condition One",
+                        result: {
+                            trueNext: "T1",
+                            falseNext: "F1"
+                        },
+                    },
+                    "T1": {
+                        type: "node",
+                        id: "T1",
+                        next: "Cond 1 End",
+                    },
+                    "F1": {
+                        type: "node",
+                        next: "Cond 1 End",
+                        id: "F1",
+                    },
+                    "Cond 1 End": {
+                        type: "node",
+                        next: "Swit One",
+                        id: "Cond 1 End",
+                    },
+                    "Swit One": {
+                        type: "switch",
+                        next: "Swit 1 End",
+                        id: "Swit One",
+                        cases: [
+                            {
+                                case: "Case 1",
+                                next: "C1"
+                            },
+                            {
+                                case: "Case 2",
+                                next: "C2"
+                            },
+                            {
+                                case: "default",
+                                next: "Default"
+                            }
+                        ],
+                    },
+                    "C1": {
+                        type: "node",
+                        next: "Swit 1 End",
+                        id: "C1",
+                    },
+                    "C2": {
+                        type: "node",
+                        next: "Swit 1 End",
+                        id: "C2",
+                    },
+                    "Default": {
+                        type: "node",
+                        next: "Swit 1 End",
+                        id: "Default",
+                    },
+                    "Swit 1 End": {
+                        type: "node",
+                        id: "Swit 1 End",
+                        next: "End",
+                    },
+                    "End": {
+                        type: "node",
+                        next: null,
+                        id: "End",
+                    }
+                }
+            }
+            setRightPanelFields();
+
+            graphObj = new QGraph({
+                //unique graph Id
+                graphId: 'Graph1',
+                graphData:graphData.conf,
+                //graph Container div ID
+                graphOutletDiv: "graphContainer",
+                //callback function to handle active node change
+                activeNodeChangeCallback: changeActiveNode,
+                //callback function to handle graph config data change
+                graphConfChangeCallback: setConfigData,
+                //Global variable name to track dragged node type
+                dragTypeVarName: "currentDraggingElement"
+            });
+
+            graphObj.renderGraph();
+
+            initDragEvts();
+            setBtnListeners();
+            window.graph = graphObj;
+
+            function initDragEvts() {
+                // draggables.forEach(draggable => {
+                //     let draggableElem = document.querySelector(`#${draggable}`);
+                //     draggableElem.addEventListener('dragstart', function (e) {
+                //         let elem = e.target.cloneNode(true);
+                //         elem.style.width = "fit-content";
+                //         elem.style.border = "1px solid #e6e6e6";
+                //         elem.style.borderRadius = "5px";
+                //         elem.style.padding = "0.5vw"
+                //         elem.style.backgroundColor = "#fff";
+                //         elem.style.position = "absolute";
+                //         document.body.appendChild(elem);
+                //         const { width, height } = elem.getBoundingClientRect();
+                //         e.dataTransfer.setDragImage(elem, width / 2, height / 2);
+                //         e.dataTransfer.setData('text', draggable);
+                //         setTimeout(() => {
+                //             // document.body.removeChild(elem);
+                //         }, 0);
+                //         window.currentDraggingElement = draggable;
+                //         // document.currentDraggingElement = draggable;
+                //     });
+                // });
+            }
+            function setRightPanelFields() {
+                rightPanelFormFields.confPanel = document.querySelector('#overall-container > #graph-config-editor > #content > #form');
+                rightPanelFormFields.nameInpField = rightPanelFormFields.confPanel.querySelector('#name input');
+                rightPanelFormFields.typeDropDownField = rightPanelFormFields.confPanel.querySelector('#type #fieldInput select');
+                rightPanelFormFields.nextDropDownField = rightPanelFormFields.confPanel.querySelector('#next #fieldInput select');
+                rightPanelFormFields.payLoadInpField = rightPanelFormFields.confPanel.querySelector('#payload textarea');
+                rightPanelCodeField = document.querySelector('#overall-container > #graph-config-editor > #content > #code textarea');
+            }
+            function changeActiveNode(newActiveNode) {
+                activeNode = JSON.parse(JSON.stringify(newActiveNode));
+                editData = {
+                    name: activeNode.id,
+                    type: activeNode.type,
+                    possibleTypes: fetchFeasibleTypes(activeNode.type, activeNode),
+                    next: [],
+                    selectedNext: '',
+                    payload: activeNode.payload
+                }
+                if (activeNode.next.length > 0) {
+                    editData.selectedNext = activeNode.successor;
+                    editData.next.push(editData.selectedNext);
+                } else {
+                    editData.next.push("--None--");
+                    editData.selectedNext = "--None--";
+                }
+                if (activeNode.futureNext && activeNode.futureNext.length > 0) {
+                    activeNode.futureNext.forEach(next => {
+                        editData.next.push(next);
+                    });
+                }
+                editData["selectedNextPrev"] = editData.selectedNext;
+                updateRightConfigPanel();
+            }
+            function updateRightConfigPanel() {
+                rightPanelFormFields.nameInpField.value = editData.name;
+                rightPanelFormFields.typeDropDownField.innerHTML = "";
+                editData.possibleTypes.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item;
+                    option.text = item;
+                    if (editData.type === item) {
+                        option.selected = true;
+                    }
+                    rightPanelFormFields.typeDropDownField.appendChild(option);
+                });
+                rightPanelFormFields.nextDropDownField.innerHTML = "";
+                editData.next.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item;
+                    option.text = item;
+                    rightPanelFormFields.nextDropDownField.appendChild(option);
+                });
+                rightPanelFormFields.payLoadInpField.value = JSON.stringify(editData.payload, null, 4);
+            }
+            function fetchFeasibleTypes(type, activeNodeObj) {
+                if (activeNode.parallelStart) {
+                    return ["parallel"]
+                } else if (type === 'node' && (activeNode.parallelEnd || activeNode.switchEnd || activeNode.conditionEnd)) {
+                    return [type];
+                } else if (type === "node") {
+                    return draggables;
+                } else {
+                    return [type];
+                }
+            }
+            function setConfigData(conf) {
+                rightPanelCodeField.value = JSON.stringify(conf, null, 4);
+            }
+            function editDetails() {
+                onEditState = 'true';
+            }
+            function setBtnListeners() {
+                let updateBtn = document.querySelector("#overall-container > #graph-config-editor > #content > #form #buttons #save");
+                updateBtn.addEventListener("click", updateChanges);
+            }
+            function updateChanges() {
+                let updates = [];
+                let name = rightPanelFormFields.nameInpField.value;
+                let next = rightPanelFormFields.nextDropDownField.value;
+                // if()
+                if (editData.selectedNext !== next) {
+                    graphObj.update.next(editData.name, editData.selectedNext, next);
+                }
+                if (editData.name !== name) {
+                    graphObj.update.rename(editData.name, name);
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

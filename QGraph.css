@@ -1,0 +1,131 @@
+.QGraph_root { 
+    position: relative;
+}
+.QGraph_root{
+    border: 1px solid #f6f6f6;
+    height: 100%;
+    display: flex;
+}
+.QGraph_root #draggables_panel {
+    width: 25%;
+    height: 100%;
+    font-size: 20px;
+    background-color: #fff;
+    border-right: 1px solid rgb(222 222 222);
+}
+.QGraph_root #draggables_panel .item{
+    padding: 1vw;
+    cursor: grab;
+    outline: none;
+    background-color: #fff;
+    border-bottom: 1px solid #e6e6e6;
+    user-select: none;
+}
+.QGraph_root .edgePath .dropHere,
+.QGraph_root .edgePath .noDrop {
+    display: none;
+    pointer-events: none;
+}
+
+.QGraph_root .edgePath.dropHover .dropHere {
+    display: flex;
+}
+
+.QGraph_root .edgePath.noDropHover .noDrop {
+    display: flex;
+}
+
+.QGraph_root .node {
+    cursor: pointer;
+}
+.QGraph_root .node .three-dot-icon {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+.QGraph_root .node:hover .three-dot-icon {
+    opacity: 1;
+    pointer-events: auto;
+}
+.QGraph_root .node .three-dot-icon div {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 16px;
+    text-align: center;
+    user-select: none;
+    color: #666;
+    background: rgba(255,255,255,0.8);
+    border: 1px solid #e6e6e6;
+    border-radius: 4px;
+    padding: 2px 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.QGraph_root .edgePath path.path {
+    stroke: #969696;
+    fill: #ccc;
+    stroke-width: 1px;
+    pointer-events: visibleStroke;
+}
+
+.QGraph_root .edgePath.hover path.path {
+    stroke: #00d9ff;
+}
+
+.QGraph_root .node rect,
+.QGraph_root .node circle,
+.QGraph_root .node ellipse,
+.QGraph_root .node polygon {
+    stroke: #d7d7d7;
+    fill: #fff;
+    stroke-width: 1px;
+}
+
+.QGraph_root tspan {
+    user-select: none;
+}
+
+.QGraph_root .node.focused {
+    fill: rgb(0, 174, 255);
+}
+
+.QGraph_root .actions {
+    position: absolute;
+    right: 1vw;
+    bottom: 30vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vw;
+}
+.QGraph_root .actions .iconWrapper{
+    padding: 0.5vw;
+    border: 1px solid #eeeeee;
+    border-radius: 0.25em;
+    background-color: #f7f7f7;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+.QGraph_root .actions .iconWrapper#reset:hover{
+    background-color: #ff8a8a;
+    color: white;
+    transition: 0.2s ease;
+}
+.QGraph_root .actions .iconWrapper#undo:hover{
+    background-color: #fba52c;
+    color: white;
+    transition: 0.2s ease;
+}
+.QGraph_root .actions .iconWrapper#redo:hover{
+    background-color: #a6a6a6;
+    color: white;
+    transition: 0.2s ease;
+}
+.QGraph_root .actions .iconWrapper #count{
+    position: absolute;
+    top: -7px;
+    right: -0.5vw;
+    background-color: lightskyblue;
+    padding: 0.1vw 0.35vw;
+    font-size: 15px;
+    border-radius: 35%;
+}
